@@ -6,7 +6,15 @@
 
 -- Query 1: Overall Business Summary
 SELECT 
-    COUNT(order_id) AS total_orders,
+-- Query 2: Revenue by Product Category (Refined)
+SELECT 
+    p.category,
+    COUNT(DISTINCT oi.order_id) AS orders_containing,
+    SUM(oi.unit_price * oi.quantity) AS category_revenue
+FROM products p
+JOIN order_items oi ON p.product_id = oi.product_id
+GROUP BY p.category
+ORDER BY category_revenue DESC;    COUNT(order_id) AS total_orders,
     SUM(total_amount) AS total_revenue,
     ROUND(AVG(total_amount), 2) AS avg_order_value
 FROM orders;
@@ -56,12 +64,14 @@ HAVING COUNT(*) >= 5;
 
 -- Query 6: Ranking Customers by Spending
 -- Objective: Rank customers from highest to lowest spender based on their orders.
+
 SELECT 
     customer_id, 
     total_amount,
     RANK() OVER (ORDER BY total_amount DESC) as spend_rank,
     ROW_NUMBER() OVER (ORDER BY total_amount DESC) as row_num
 FROM orders;
+
 
 -- Query 7: Month-over-Month Comparison (LAG)
 -- Objective: Compare current monthly revenue with the previous month.
