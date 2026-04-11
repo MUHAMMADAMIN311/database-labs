@@ -125,15 +125,22 @@ h1, h2, h3, [data-testid="stMetricLabel"] {
     font-size: 0.9rem;
     color: #8888aa;
     margin-bottom: 28px;
-}
+# ─────────────────────────────────────────────────────────────────
+# DATABASE HELPER
+# ─────────────────────────────────────────────────────────────────
+import os
 
-/* Plotly chart container */
-.chart-wrap {
-    background: #13131f;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.06);
-    padding: 4px;
-}
+# This finds the exact folder where app.py is sitting
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "swiftride.db")
+
+@st.cache_data(ttl=60)
+def query(sql: str) -> pd.DataFrame:
+    # Now it uses the full GPS coordinate to find your database
+    conn = sqlite3.connect(DB_PATH)
+    df = pd.read_sql_query(sql, conn)
+    conn.close()
+    return df
 </style>
 """, unsafe_allow_html=True)
 
